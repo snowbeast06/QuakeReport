@@ -14,6 +14,7 @@ public class Earthquake {
     private String location;
     private long date;
     private Date formattedDate;
+    private String URL;
 
     //basic constructor with magnitude, location and date
     public Earthquake(float magnitude, String location, long date) {
@@ -21,6 +22,15 @@ public class Earthquake {
         this.location = location;
         this.date = date;
         this.formattedDate = new Date(date) ;
+    }
+
+    //full constructor with magnitude, location, date, and URL
+    public Earthquake(float magnitude, String location, long date, String url) {
+        this.magnitude = magnitude;
+        this.location = location;
+        this.date = date;
+        this.formattedDate = new Date(date) ;
+        this.URL = url;
     }
 
     // Getters
@@ -34,7 +44,11 @@ public class Earthquake {
     }
     
     public String getFormattedDate() {
-        return DateFormat.getDateInstance().format(date*1000);
+        return DateFormat.getDateTimeInstance().format(date);
+    }
+
+    public String getURL() {
+        return URL;
     }
 
     // a toString method for printing

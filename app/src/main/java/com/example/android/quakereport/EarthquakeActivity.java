@@ -15,15 +15,22 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class EarthquakeActivity extends AppCompatActivity {
 
+
+
+public class EarthquakeActivity extends AppCompatActivity {
+    private ArrayList<Earthquake> earthquakes;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
     @Override
@@ -32,16 +39,10 @@ public class EarthquakeActivity extends AppCompatActivity {
         setContentView(R.layout.earthquake_activity);
 
         // Create a fake list of earthquake locations.
-        ArrayList<Earthquake> earthquakes = new ArrayList<Earthquake>();
+        earthquakes = new ArrayList<Earthquake>();
 
-        earthquakes.add(new Earthquake(4.6f, "San Francisco", 1454371200 ));
-        earthquakes.add(new Earthquake(6.1f, "London", 1454371200 ));
-        earthquakes.add(new Earthquake(3.4f, "Tokyo", 1454371200 ));
-        earthquakes.add(new Earthquake(5.4f, "Mexico City", 1454371200 ));
-        earthquakes.add(new Earthquake(2.8f, "Moscow", 1454371200 ));
-        earthquakes.add(new Earthquake(4.9f, "Rio Di Janiero", 1454371200 ));
-        earthquakes.add(new Earthquake(1.6f, "Paris", 1454371200 ));
-
+        //extract the list of earthquakes from our static JSON string
+        earthquakes = QueryUtils.extractEarthquakes();
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
@@ -50,5 +51,22 @@ public class EarthquakeActivity extends AppCompatActivity {
         EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes );
         earthquakeListView.setAdapter(adapter);
 
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // trigger an intent that launches an URL
+                launchWebPage(position);
+            }
+        });
+
+    }
+
+    private void launchWebPage(int position) {
+        Uri webpage = Uri.parse(earthquakes.get(position).getURL());
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
